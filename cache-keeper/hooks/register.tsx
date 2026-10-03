@@ -208,6 +208,14 @@ async function autoCompact($: EngineInterface, config: KeeperConfig): Promise<vo
   } catch (error) {
     if (await read($, isRunningAtom)) return // a turn started first: try again when it ends
     reason = error instanceof Error ? error.message : String(error)
+    // Desktop and SDK sessions refuse $.session.compact (compaction there runs inside a turn), so
+    // queue /compact the way the 📦 button does. A compaction that lands clears the refusal mark
+    // in the session.compact hook; one that never runs waits for more context before the next try.
+    if (/not available/i.test(reason)) {
+      await update($, compactRefusedAtAtom, () => view.contextTokens)
+      await compactNow($)
+      return
+    }
   }
   await update($, compactRefusedAtAtom, () => view.contextTokens)
   $.ui.toast(

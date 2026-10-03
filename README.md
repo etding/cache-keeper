@@ -108,9 +108,10 @@ for compact", "warn me 10 minutes before instead of 5". Claude edits the mod and
 when the reply ends.
 
 ### Step 7. Keep it in every session
-Type: **Make this mod load in every session.**
-Claude copies the mod to a permanent folder and adds one line to your Claude settings.
-Start a new session to see it there.
+Type: **Make this mod load in every session. Add both `CLAUDE_CODE_PLUGIN_DIRS` and `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` to the env block of my user settings.**
+Claude copies the mod to a permanent folder and adds two lines to your Claude settings.
+The second line matters: without it, sessions the desktop app starts find the mod but don't run it.
+Start a new session to see it there. Chats that were already open keep running without it until you reopen them.
 
 To stop it later, type: **Stop loading cache-keeper in every session.**
 
@@ -121,7 +122,7 @@ To stop it later, type: **Stop loading cache-keeper in every session.**
 The [`cache-keeper`](cache-keeper) folder in this repository is the finished mod. To use it:
 
 1. Open a Code session and paste:
-   **Install the cache-keeper mod from https://github.com/etding/cache-keeper into a permanent folder, check it with `claude plugin validate`, then make it load in every session.**
+   **Install the cache-keeper mod from https://github.com/etding/cache-keeper into a permanent folder, check it with `claude plugin validate`, then make it load in every session: add `CLAUDE_CODE_PLUGIN_DIRS` and `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` to the env block of my user settings.**
 2. Start a new session.
 
 Prefer doing it by hand? Click the green **Code** button on this page → **Download ZIP**, unzip it,
@@ -153,5 +154,7 @@ For one chat only: `/cache-keeper autocompact 250k` (or `off`, or `auto`).
 |---|---|
 | No pills at all | Send one message first. The cache starts after the first reply. |
 | Still nothing | Ask Claude: "cache-keeper didn't load. Run `claude plugin validate` on it and fix it." |
+| Works in the chat where you built it, but not in new chats | Ask Claude: "Add `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1` to the env block of my user settings." Then start a new chat. |
+| Context goes past the auto-compact point and nothing happens | Same fix as above, then reopen the chat. Already-open chats don't pick up settings changes. |
 | No 5h / weekly pills | These only show on subscription plans. |
 | Emoji look odd | Emoji are drawn by your system font. Ask Claude to swap the emoji. |
